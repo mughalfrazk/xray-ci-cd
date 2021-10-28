@@ -18,7 +18,7 @@ jobs:
   # This workflow contains a single job called "build"
   test:
     # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+    runs-on: windows-2019
     steps:
     - name: Clone repository
       uses: actions/checkout@v2
@@ -40,7 +40,7 @@ jobs:
         curl -H "Content-Type: application/json" --output ./features.zip -X GET -H "Authorization: Bearer ${{ steps.xray-token.outputs.XRAY_TOKEN }}"  "https://xray.cloud.xpand-it.com/api/v1/export/cucumber?keys=$keys"
       
     - name: Unzip Feature
-      run: unzip -o ./features.zip -d ./IWECProject/Features
+      run: unzip -o features/features.zip -d ./IWECProject/Features
       
     - name: Submit result to xray
       run: |
