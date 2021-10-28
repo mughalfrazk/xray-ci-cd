@@ -49,7 +49,9 @@ jobs:
       uses: actions/download-artifact@v1
       with:
         name: cucumber-features
-        run: unzip -o cucumber-features -d ./IWECProject/Features
+
+    - name: Unzip Feature
+      run: unzip -o cucumber-features -d ./IWECProject/Features
       
     - name: Submit result to xray
       run: |
