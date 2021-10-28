@@ -39,22 +39,8 @@ jobs:
       run: |
         curl -H "Content-Type: application/json" --output ./features.zip -X GET -H "Authorization: Bearer ${{ steps.xray-token.outputs.XRAY_TOKEN }}"  "https://xray.cloud.xpand-it.com/api/v1/export/cucumber?keys=$keys"
       
-    - name: Share artifact inside workflow
-      uses: actions/upload-artifact@v1
-      with:
-        name: cucumber-features
-        path: ./features.zip
-
-    - name: Get artifact
-      uses: actions/download-artifact@v1
-      with:
-        name: cucumber-features
-
     - name: Unzip Feature
-      run: unzip -o features.zip -d ./IWECProject/Features
-      with:
-        name: cucumber-features
-        path: ./features.zip
+      run: unzip -o ./features.zip -d ./IWECProject/Features
       
     - name: Submit result to xray
       run: |
