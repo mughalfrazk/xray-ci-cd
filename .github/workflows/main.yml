@@ -51,7 +51,10 @@ jobs:
         name: cucumber-features
 
     - name: Unzip Feature
-      run: unzip -o cucumber-features -d ./IWECProject/Features
+      run: unzip -o features.zip -d ./IWECProject/Features
+      with:
+        name: cucumber-features
+        path: ./features.zip
       
     - name: Submit result to xray
       run: |
