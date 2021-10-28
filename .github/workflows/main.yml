@@ -29,19 +29,32 @@ jobs:
     
     - name: Install dependencies
       run: npm install    
+
+    - name: Run tests
+      run: npm run test    
     
-    - name: Get XRay Token
-      shell: bash
+    - name: Get Xray Cloud API token
+      env:
+        CLIENT_ID: ${{ secrets.CLIENT_ID }}
+        CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+      id: xray-token
       run: |
         echo ::set-output name=XRAY_TOKEN::$(curl -H "Content-Type: application/json" -X POST --data "{ \"client_id\": \"$CLIENT_ID\",\"client_secret\": \"$CLIENT_SECRET\" }" https://xray.cloud.xpand-it.com/api/v1/authenticate| tr -d '"')
+    - name: Submit results to Xray
+      run: 'curl -H "Content-Type: text/xml" -H "Authorization: Bearer ${{ steps.xray-token.outputs.XRAY_TOKEN }}" --data @target/surefire-reports/TEST-com.xpand.java.CalcTest.xml  "https://xray.cloud.xpand-it.com/api/v2/import/execution/junit?projectKey=CALC"'
+
+    # - name: Get XRay Token
+    #   shell: bash
+    #   run: |
+    #     echo ::set-output name=XRAY_TOKEN::$(curl -H "Content-Type: application/json" -X POST --data "{ \"client_id\": \"$CLIENT_ID\",\"client_secret\": \"$CLIENT_SECRET\" }" https://xray.cloud.xpand-it.com/api/v1/authenticate| tr -d '"')
       
-    - name: Get feature.zip file from specified Xray test issue
-      run: |
-        curl -H "Content-Type: application/json" --output ./features.zip -X GET -H "Authorization: Bearer ${{ steps.xray-token.outputs.XRAY_TOKEN }}"  "https://xray.cloud.xpand-it.com/api/v1/export/cucumber?keys=$keys"
+    # - name: Get feature.zip file from specified Xray test issue
+    #   run: |
+    #     curl -H "Content-Type: application/json" --output ./features.zip -X GET -H "Authorization: Bearer ${{ steps.xray-token.outputs.XRAY_TOKEN }}"  "https://xray.cloud.xpand-it.com/api/v1/export/cucumber?keys=$keys"
       
-    - name: Unzip Feature
-      run: unzip -o features/features.zip -d ./IWECProject/Features
+    # - name: Unzip Feature
+    #   run: unzip -o features/features.zip -d ./IWECProject/Features
       
-    - name: Submit result to xray
-      run: |
-        curl -H "Content-Type: application/json" -X POST -H "Authorization: Bearer ${{ steps.xray-token.outputs.XRAY_TOKEN }}" --data @IWECProject/target/cucumber.json "https://xray.cloud.xpand-it.com/api/v1/import/execution/cucumber"
+    # - name: Submit result to xray
+    #   run: |
+    #     curl -H "Content-Type: application/json" -X POST -H "Authorization: Bearer ${{ steps.xray-token.outputs.XRAY_TOKEN }}" --data @IWECProject/target/cucumber.json "https://xray.cloud.xpand-it.com/api/v1/import/execution/cucumber"
